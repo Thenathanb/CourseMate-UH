@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UH Course Catalog - Test Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .header {
+      background: #c8102e;
+      color: white;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      background: white;
+      border-collapse: collapse;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background: #f8f8f8;
+      font-weight: 600;
+    }
+
+    tr:hover {
+      background: #f9f9f9;
+    }
+
+    .instructor-name {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .course-code {
+      font-weight: 600;
+      color: #c8102e;
+    }
+
+    .info-box {
+      background: #e3f2fd;
+      border-left: 4px solid #2196F3;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>University of Houston</h1>
+    <p>Course Schedule - Spring 2024</p>
+  </div>
+
+  <div class="info-box">
+    <strong>Test Page for CourseMate UH Extension</strong><br>
+    This page simulates a UH course catalog with instructor names in various formats.
+    The extension should automatically add rating badges next to each professor's name.
+  </div>
+
+  <h2>Computer Science Courses</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Course</th>
+        <th>Title</th>
+        <th>Instructor</th>
+        <th>Days</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="course-code">COSC 1430</td>
+        <td>Introduction to Programming</td>
+        <td><span class="instructor-name">Smith, John</span></td>
+        <td>MWF</td>
+        <td>10:00 AM - 10:50 AM</td>
+      </tr>
+      <tr>
+        <td class="course-code">COSC 2430</td>
+        <td>Data Structures</td>
+        <td><span class="instructor-name">Sarah Johnson</span></td>
+        <td>TR</td>
+        <td>1:00 PM - 2:30 PM</td>
+      </tr>
+      <tr>
+        <td class="course-code">COSC 3320</td>
+        <td>Algorithms</td>
+        <td><span class="instructor-name">Williams, Robert</span></td>
+        <td>MWF</td>
+        <td>2:00 PM - 2:50 PM</td>
+      </tr>
+      <tr>
+        <td class="course-code">COSC 4353</td>
+        <td>Software Engineering</td>
+        <td><span class="instructor-name">Emily Davis</span></td>
+        <td>TR</td>
+        <td>4:00 PM - 5:30 PM</td>
+      </tr>
+      <tr>
+        <td class="course-code">COSC 4368</td>
+        <td>Machine Learning</td>
+        <td><span class="instructor-name">TBA</span></td>
+        <td>MW</td>
+        <td>7:00 PM - 8:30 PM</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Mathematics Courses</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Course</th>
+        <th>Title</th>
+        <th>Instructor</th>
+        <th>Days</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="course-code">MATH 1431</td>
+        <td>Calculus I</td>
+        <td><span class="instructor-name">JOHNSON, SARAH</span></td>
+        <td>MWF</td>
+        <td>9:00 AM - 9:50 AM</td>
+      </tr>
+      <tr>
+        <td class="course-code">MATH 2433</td>
+        <td>Calculus III</td>
+        <td><span class="instructor-name">Smith, John A.</span></td>
+        <td>TR</td>
+        <td>11:00 AM - 12:30 PM</td>
+      </tr>
+      <tr>
+        <td class="course-code">MATH 3330</td>
+        <td>Linear Algebra</td>
+        <td><span class="instructor-name">Staff</span></td>
+        <td>MWF</td>
+        <td>1:00 PM - 1:50 PM</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top: 30px; padding: 20px; background: white; border-radius: 8px;">
+    <h3>Testing Instructions</h3>
+    <ol>
+      <li><strong>Load the extension</strong> - Follow the README to install CourseMate UH</li>
+      <li><strong>Open this test page</strong> - Note: You'll need to temporarily modify the manifest to allow this page, or host it on a *.uh.edu domain</li>
+      <li><strong>Expected results:</strong>
+        <ul>
+          <li>✅ Badges appear next to: Smith, Sarah Johnson, Williams, Emily Davis</li>
+          <li>❌ No badges for: TBA, Staff</li>
+          <li>✅ Handles different formats: "Last, First", "First Last", "LAST, FIRST"</li>
+        </ul>
+      </li>
+      <li><strong>Test interactions:</strong>
+        <ul>
+          <li>Hover over badges to see detailed tooltips</li>
+          <li>Click badges to open (simulated) RMP pages</li>
+          <li>Check console for debug logs (if debug mode enabled)</li>
+        </ul>
+      </li>
+    </ol>
+
+    <h4>Quick Test in Console</h4>
+    <p>Open browser console (F12) and run:</p>
+    <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto;">
+// Check if extension loaded
+window.profPeekDebug
+
+// Force a scan
+window.profPeekDebug.scan()
+
+// Test name normalization
+window.profPeekDebug.testName('Smith, John')
+
+// Show current selectors
+window.profPeekDebug.showSelectors()
+
+// Add the selector used on this page
+window.profPeekDebug.addSelector('.instructor-name')
+    </pre>
+  </div>
+
+  <script>
+    // Simulate dynamic content loading (tests MutationObserver)
+    setTimeout(() => {
+      const newRow = document.querySelector('tbody').insertRow();
+      newRow.innerHTML = `
+        <td class="course-code">COSC 4999</td>
+        <td>Special Topics</td>
+        <td><span class="instructor-name">Williams, Robert</span></td>
+        <td>W</td>
+        <td>6:00 PM - 9:00 PM</td>
+      `;
+      console.log('Dynamically added course - extension should detect this!');
+    }, 3000);
+  </script>
+</body>
+</html>

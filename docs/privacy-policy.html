@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Privacy Policy for CourseMate UH</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.6;
+        color: #1a1a1a;
+        background: #ffffff;
+      }
+      main {
+        max-width: 860px;
+        margin: 40px auto;
+        padding: 0 20px 60px;
+      }
+      h1,
+      h2 {
+        line-height: 1.2;
+      }
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 0.25rem;
+      }
+      h2 {
+        font-size: 1.25rem;
+        margin-top: 2rem;
+      }
+      ul {
+        padding-left: 1.2rem;
+      }
+      .muted {
+        color: #555;
+      }
+      .callout {
+        background: #f6f6f6;
+        border-left: 4px solid #d0d0d0;
+        padding: 12px 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Privacy Policy for CourseMate UH</h1>
+      <p class="muted"><strong>Last Updated:</strong> January 11, 2026</p>
+
+      <h2>Overview</h2>
+      <p>
+        CourseMate UH is committed to protecting your privacy. This extension is
+        designed to enhance your course selection experience without collecting
+        any personal information.
+      </p>
+
+      <h2>Data Collection</h2>
+      <p><strong>CourseMate UH does NOT collect, store, or transmit any personal information.</strong></p>
+      <p>Specifically, we do NOT collect:</p>
+      <ul>
+        <li>Your name, email, or contact information</li>
+        <li>Your browsing history</li>
+        <li>Your search queries</li>
+        <li>Your course selections</li>
+        <li>Any personally identifiable information (PII)</li>
+      </ul>
+
+      <h2>Data Storage</h2>
+      <p>The extension stores the following data <strong>locally on your device only</strong>:</p>
+      <ol>
+        <li>
+          <strong>Professor Ratings Cache</strong>: RateMyProfessors ratings are cached
+          in your browser's local storage for 7 days to improve performance and reduce
+          API calls. This cache includes:
+          <ul>
+            <li>Professor names</li>
+            <li>Overall ratings</li>
+            <li>Number of ratings</li>
+            <li>Difficulty scores</li>
+            <li>"Would take again" percentages</li>
+            <li>RateMyProfessors profile URLs</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Extension Settings</strong>: User preferences such as whether debug mode
+          is enabled.
+        </li>
+      </ol>
+      <p>
+        All data is stored locally using Chrome's <code>chrome.storage.local</code> API and
+        <strong>never leaves your device</strong>.
+      </p>
+
+      <h2>Third-Party Services</h2>
+      <p>CourseMate UH fetches public professor rating data from RateMyProfessors.com's public GraphQL API. When you view a course page:</p>
+      <ol>
+        <li>The extension identifies professor names on the page</li>
+        <li>It queries RateMyProfessors' public API for ratings</li>
+        <li>The results are displayed on your page and cached locally</li>
+      </ol>
+      <p>
+        <strong>No personal information is sent to RateMyProfessors.</strong> Only professor
+        names and the University of Houston school ID are used in API queries.
+      </p>
+
+      <h2>Permissions</h2>
+      <ul>
+        <li><strong>storage</strong>: To cache professor ratings locally in your browser for faster performance</li>
+        <li><strong>activeTab</strong>: To access and modify course catalog pages on *.uh.edu domains</li>
+        <li><strong>host_permissions for *.uh.edu</strong>: To run the extension only on University of Houston websites</li>
+        <li><strong>host_permissions for www.ratemyprofessors.com</strong>: To fetch professor ratings from the RateMyProfessors API</li>
+      </ul>
+
+      <h2>Data Sharing</h2>
+      <p><strong>CourseMate UH does NOT share, sell, or transmit any data to third parties.</strong></p>
+      <p>
+        The extension operates entirely within your browser. The only external communication
+        is with RateMyProfessors.com's public API to fetch ratings.
+      </p>
+
+      <h2>Changes to This Policy</h2>
+      <p>
+        We may update this privacy policy from time to time. Any changes will be reflected in
+        the "Last Updated" date above and posted in the extension's listing on the Chrome Web Store.
+      </p>
+
+      <h2>Contact</h2>
+      <p>If you have questions about this privacy policy, please contact us through the Chrome Web Store support page or GitHub repository.</p>
+
+      <h2>Your Rights</h2>
+      <p>You can:</p>
+      <ul>
+        <li><strong>Clear cached data</strong>: Click the extension icon and use the "Clear Cache" button</li>
+        <li><strong>Disable the extension</strong>: Turn it off in Chrome's extension settings</li>
+        <li><strong>Uninstall</strong>: Remove the extension completely from your browser</li>
+      </ul>
+      <p>All locally stored data will be deleted when you uninstall the extension.</p>
+
+      <p class="callout">
+        <strong>CourseMate UH is not affiliated with or endorsed by the University of Houston or RateMyProfessors.com.</strong>
+      </p>
+    </main>
+  </body>
+</html>

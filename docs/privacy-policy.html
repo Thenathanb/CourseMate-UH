@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Privacy Policy for CourseMate UH</title>
+    <title>Privacy Policy for CourseMate</title>
     <style>
       :root {
         color-scheme: light;
@@ -47,18 +47,18 @@
   </head>
   <body>
     <main>
-      <h1>Privacy Policy for CourseMate UH</h1>
-      <p class="muted"><strong>Last Updated:</strong> January 11, 2026</p>
+      <h1>Privacy Policy for CourseMate</h1>
+      <p class="muted"><strong>Last Updated:</strong> January 14, 2026</p>
 
       <h2>Overview</h2>
       <p>
-        CourseMate UH is committed to protecting your privacy. This extension is
-        designed to enhance your course selection experience without collecting
-        any personal information.
+        CourseMate is committed to protecting your privacy. This extension is
+        designed to enhance your course selection experience on supported university
+        course pages without collecting any personal information.
       </p>
 
       <h2>Data Collection</h2>
-      <p><strong>CourseMate UH does NOT collect, store, or transmit any personal information.</strong></p>
+      <p><strong>CourseMate does NOT collect, store, or transmit any personal information.</strong></p>
       <p>Specifically, we do NOT collect:</p>
       <ul>
         <li>Your name, email, or contact information</li>
@@ -85,6 +85,15 @@
           </ul>
         </li>
         <li>
+          <strong>Grade Distribution Cache</strong>: CougarGrades grade distribution data is cached
+          in your browser's local storage to reduce repeat requests. This cache includes:
+          <ul>
+            <li>Course codes</li>
+            <li>Grade distribution counts and percentages</li>
+            <li>Average GPA (when available)</li>
+          </ul>
+        </li>
+        <li>
           <strong>Extension Settings</strong>: User preferences such as whether debug mode
           is enabled.
         </li>
@@ -95,30 +104,32 @@
       </p>
 
       <h2>Third-Party Services</h2>
-      <p>CourseMate UH fetches public professor rating data from RateMyProfessors.com's public GraphQL API. When you view a course page:</p>
+      <p>CourseMate fetches public professor data from RateMyProfessors.com's public GraphQL API and grade distribution data from CougarGrades public datasets. When you view a supported course page:</p>
       <ol>
         <li>The extension identifies professor names on the page</li>
-        <li>It queries RateMyProfessors' public API for ratings</li>
+        <li>It queries RateMyProfessors' public API for ratings and reviews</li>
+        <li>It queries CougarGrades public datasets for grade distributions</li>
         <li>The results are displayed on your page and cached locally</li>
       </ol>
       <p>
-        <strong>No personal information is sent to RateMyProfessors.</strong> Only professor
-        names and the University of Houston school ID are used in API queries.
+        <strong>No personal information is sent to external services.</strong> Only professor
+        names, course codes, and the relevant school ID for the supported institution are used in API queries.
       </p>
 
       <h2>Permissions</h2>
       <ul>
         <li><strong>storage</strong>: To cache professor ratings locally in your browser for faster performance</li>
-        <li><strong>activeTab</strong>: To access and modify course catalog pages on *.uh.edu domains</li>
-        <li><strong>host_permissions for *.uh.edu</strong>: To run the extension only on University of Houston websites</li>
+        <li><strong>activeTab</strong>: To access and modify course catalog pages on supported university domains (currently *.uh.edu)</li>
+        <li><strong>host_permissions for *.uh.edu</strong>: To run the extension only on supported university websites (currently University of Houston)</li>
         <li><strong>host_permissions for www.ratemyprofessors.com</strong>: To fetch professor ratings from the RateMyProfessors API</li>
+        <li><strong>host_permissions for cougargrades.io and unpkg.com</strong>: To fetch grade distribution data from CougarGrades public datasets</li>
       </ul>
 
       <h2>Data Sharing</h2>
-      <p><strong>CourseMate UH does NOT share, sell, or transmit any data to third parties.</strong></p>
+      <p><strong>CourseMate does NOT share, sell, or transmit any data to third parties.</strong></p>
       <p>
         The extension operates entirely within your browser. The only external communication
-        is with RateMyProfessors.com's public API to fetch ratings.
+        is with RateMyProfessors' public API and CougarGrades public datasets to fetch ratings, reviews, and grade distributions.
       </p>
 
       <h2>Changes to This Policy</h2>
@@ -140,7 +151,7 @@
       <p>All locally stored data will be deleted when you uninstall the extension.</p>
 
       <p class="callout">
-        <strong>CourseMate UH is not affiliated with or endorsed by the University of Houston or RateMyProfessors.com.</strong>
+        <strong>CourseMate is not affiliated with or endorsed by the University of Houston, RateMyProfessors.com, or CougarGrades.io.</strong>
       </p>
     </main>
   </body>

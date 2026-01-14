@@ -1,6 +1,6 @@
-# CourseMate UH 
+# CourseMate 
 
-A Chrome Extension (Manifest V3) that integrates RateMyProfessors ratings directly into the University of Houston course catalog pages.
+A Chrome Extension (Manifest V3) that integrates RateMyProfessors ratings directly into supported university course catalog pages (currently University of Houston).
 
 ![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-blue)
 ![Manifest V3](https://img.shields.io/badge/Manifest-V3-green)
@@ -8,14 +8,14 @@ A Chrome Extension (Manifest V3) that integrates RateMyProfessors ratings direct
 
 ## Features
 
-✅ **Automatic Detection** - Finds instructor names on UH course pages
-✅ **Instant Ratings** - Shows RMP rating, # of reviews, difficulty, and "would take again" %
-✅ **One-Click Access** - Click any badge to open the full RMP profile
-✅ **Smart Caching** - Reduces API calls with configurable cache duration
-✅ **Rate Limiting** - Prevents spamming external services
-✅ **Dynamic Content** - Works with pages that load instructors asynchronously
-✅ **Clean UI** - Non-intrusive badges with color-coded ratings
-✅ **Privacy Focused** - All data stored locally, no tracking
+- **Automatic Detection** - Finds instructor names on supported university course pages (currently UH)
+- **Instant Ratings** - Shows RMP rating, # of reviews, difficulty, "would take again" %
+- **One-Click Access** - Click any badge to open the full RMP profile
+- **Smart Caching** - Reduces API calls with configurable cache duration
+- **Rate Limiting** - Prevents spamming external services
+- **Dynamic Content** - Works with pages that load instructors asynchronously
+- **Clean UI** - Non-intrusive badges with color-coded ratings
+- **Privacy Focused** - All data stored locally, no tracking
 
 ## Installation
 
@@ -23,8 +23,8 @@ A Chrome Extension (Manifest V3) that integrates RateMyProfessors ratings direct
 
 1. **Download or Clone this repository**
    ```bash
-   git clone https://github.com/yourusername/prof-peek.git
-   cd prof-peek
+   git clone https://github.com/yourusername/CourseMate-UH.git
+   cd CourseMate-UH
    ```
 
 2. **Open Chrome Extensions Page**
@@ -36,10 +36,10 @@ A Chrome Extension (Manifest V3) that integrates RateMyProfessors ratings direct
 
 4. **Load the Extension**
    - Click "Load unpacked"
-   - Select the `CourseMate UH` folder (the one containing `manifest.json`)
+   - Select the `CourseMate-UH` folder (the one containing `manifest.json`)
 
 5. **Verify Installation**
-   - You should see "CourseMate UH - RateMyProfessors for UH" in your extensions list
+   - You should see "CourseMate" in your extensions list
    - The extension icon should appear in your Chrome toolbar
 
 ### Option 2: Chrome Web Store (Coming Soon)
@@ -64,7 +64,7 @@ A Chrome Extension (Manifest V3) that integrates RateMyProfessors ratings direct
    document.body.appendChild(testDiv);
 
    // Trigger a scan
-   window.profPeekDebug.scan();
+   window.courseMateDebug.scan();
    ```
 
 3. **Mock professors available:**
@@ -114,7 +114,7 @@ A Chrome Extension (Manifest V3) that integrates RateMyProfessors ratings direct
 
 5. **Reload the extension**:
    - Go to `chrome://extensions/`
-   - Click the refresh icon (↻) on the CourseMate UH card
+   - Click the refresh icon (↻) on the CourseMate card
    - Reload the UH course page
 
 #### Step 2: Verify Detection
@@ -122,20 +122,20 @@ A Chrome Extension (Manifest V3) that integrates RateMyProfessors ratings direct
 1. Open the browser console (F12) on a UH course page
 2. Look for logs like:
    ```
-   [CourseMate UH] Found professor: Johnson, Sarah
-   [CourseMate UH] Found 5 elements matching "td.instructor"
+   [CourseMate] Found professor: Johnson, Sarah
+   [CourseMate] Found 5 elements matching "td.instructor"
    ```
 
 3. If no professors are detected, use the debug helpers:
    ```javascript
    // Check current selectors
-   window.profPeekDebug.showSelectors();
+   window.courseMateDebug.showSelectors();
 
    // Test a selector
-   window.profPeekDebug.addSelector('your-new-selector');
+   window.courseMateDebug.addSelector('your-new-selector');
 
    // Force a re-scan
-   window.profPeekDebug.reset();
+   window.courseMateDebug.reset();
    ```
 
 ## Extension Settings
@@ -160,7 +160,7 @@ Click the extension icon in the Chrome toolbar to access settings:
 ## File Structure
 
 ```
-prof-peek/
+CourseMate-UH/
 ├── manifest.json          # Extension configuration (MV3)
 ├── background.js          # Service worker (data fetching, caching, rate limiting)
 ├── contentScript.js       # DOM manipulation and badge injection
@@ -274,13 +274,13 @@ The extension is designed with a provider interface. To add real RateMyProfessor
 
 ### Important Considerations
 
-⚠️ **Legal & Ethical**
+️ **Legal & Ethical**
 - Respect RateMyProfessors' terms of service
 - Do not scrape aggressively (use rate limiting)
 - Consider reaching out to RMP for official API access
 - Comply with robots.txt
 
-⚠️ **Technical**
+️ **Technical**
 - Implement proper error handling
 - Cache aggressively to minimize requests
 - Handle CORS issues (may need background fetch)
@@ -292,20 +292,20 @@ Open the browser console on any UH page to access these debugging tools:
 
 ```javascript
 // Show current configuration
-window.profPeekDebug.showSelectors();
+window.courseMateDebug.showSelectors();
 
 // Test name extraction
-window.profPeekDebug.testName('Smith, John');
-window.profPeekDebug.testName('Sarah Johnson');
+window.courseMateDebug.testName('Smith, John');
+window.courseMateDebug.testName('Sarah Johnson');
 
 // Add a new selector and re-scan
-window.profPeekDebug.addSelector('.your-selector');
+window.courseMateDebug.addSelector('.your-selector');
 
 // Force re-scan of the page
-window.profPeekDebug.scan();
+window.courseMateDebug.scan();
 
 // Clear all processed elements and re-scan
-window.profPeekDebug.reset();
+window.courseMateDebug.reset();
 ```
 
 ## Test Checklist
@@ -367,7 +367,7 @@ Use this checklist to verify the extension is working correctly:
    - Check `manifest.json` to add more domains if needed
 
 3. **Check selectors**
-   - Open console and run `window.profPeekDebug.showSelectors()`
+   - Open console and run `window.courseMateDebug.showSelectors()`
    - Verify selectors match actual page structure
    - Use browser Inspector to find correct selectors
 
@@ -400,15 +400,15 @@ Use this checklist to verify the extension is working correctly:
 
 1. Edit files in the extension directory
 2. Go to `chrome://extensions/`
-3. Click refresh icon (↻) on CourseMate UH card
+3. Click refresh icon (↻) on CourseMate card
 4. Reload any open UH pages to see changes
 
 ### Testing
 
 ```bash
 # Open console on any page and test:
-window.profPeekDebug.testName('Smith, John');  # Should return normalized name
-window.profPeekDebug.scan();  # Force re-scan
+window.courseMateDebug.testName('Smith, John');  # Should return normalized name
+window.courseMateDebug.scan();  # Force re-scan
 ```
 
 ### Adding Icons
@@ -422,7 +422,7 @@ icons/
 └── icon128.png  # 128x128 pixels (Chrome Web Store)
 ```
 
-Recommended: Use a graduation cap, star, or "RMP" text logo with UH colors.
+Recommended: Use a graduation cap, star, or "RMP" text logo with school colors (currently UH).
 
 ## Privacy & Permissions
 
@@ -435,7 +435,7 @@ Recommended: Use a graduation cap, star, or "RMP" text logo with UH colors.
 
 - **`storage`** - Store cached ratings and settings locally
 - **`activeTab`** - Access current tab to inject badges
-- **`https://*.uh.edu/*`** - Run on UH course pages
+- **`https://*.uh.edu/*`** - Run on supported university course pages (currently UH)
 - **`https://www.ratemyprofessors.com/*`** - Fetch professor ratings (when real provider is implemented)
 
 ## Contributing
@@ -465,13 +465,13 @@ Use at your own discretion. Professor ratings are user-submitted and may not ref
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/prof-peek/issues)
+- **Issues**: [GitHub Issues](https://github.com/yourusername/CourseMate-UH/issues)
 - **Questions**: Open a discussion on GitHub
 - **UH-specific help**: Check selectors for your specific catalog page
 
 ---
 
-Made with ❤️ for UH students
+Made with care for UH students
 
 **Version**: 1.0.0
 **Last Updated**: 2026-01-06

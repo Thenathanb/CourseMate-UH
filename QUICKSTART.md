@@ -1,4 +1,4 @@
-# Quick Start Guide - CourseMate UH
+# Quick Start Guide - CourseMate
 
 ##  Installation (2 minutes)
 
@@ -7,7 +7,7 @@
 1. Open Chrome and navigate to: `chrome://extensions/`
 2. Enable **Developer mode** (toggle in top-right)
 3. Click **Load unpacked**
-4. Select the `CourseMate UH` folder
+4. Select the `CourseMate-UH` folder
 5.  Done! You should see the extension in your toolbar
 
 ### Step 2: Add Icons (Optional but Recommended)
@@ -22,7 +22,7 @@ The extension will show warnings without icons. Add three PNG files to the `icon
 
 ---
 
-## 🧪 Testing Immediately
+##  Testing Immediately
 
 ### Option 1: Use the Test Page
 
@@ -47,12 +47,12 @@ The extension will show warnings without icons. Add three PNG files to the `icon
 
 1. Navigate to any UH course catalog/schedule page
 2. Open browser console (F12)
-3. Look for logs: `[CourseMate UH] Content script loaded`
+3. Look for logs: `[CourseMate] Content script loaded`
 4. If no badges appear, you need to configure selectors...
 
 ---
 
-## 🎯 Configuring for UH Pages
+##  Configuring for UH Pages
 
 ### Find the Right Selectors
 
@@ -95,7 +95,7 @@ const SELECTORS = {
 ```
 
 4. Save the file
-5. Reload extension: `chrome://extensions/` → click ↻ on CourseMate UH
+5. Reload extension: `chrome://extensions/` → click ↻ on CourseMate
 6. Reload the UH page
 
 ### Verify It Works
@@ -104,17 +104,17 @@ Open console on the UH page:
 
 ```javascript
 // Should show your selectors
-window.profPeekDebug.showSelectors()
+window.courseMateDebug.showSelectors()
 
 // Should detect professors
-window.profPeekDebug.scan()
+window.courseMateDebug.scan()
 ```
 
-Look for: `[CourseMate UH] Found 8 elements matching "td.schedule-instructor"`
+Look for: `[CourseMate] Found 8 elements matching "td.schedule-instructor"`
 
 ---
 
-## ⚙️ Settings
+## ️ Settings
 
 Click the extension icon to open settings:
 
@@ -132,14 +132,14 @@ Click the extension icon to open settings:
 
 ---
 
-## 🐛 Debugging
+##  Debugging
 
 ### Badges Not Appearing?
 
 **1. Check if extension is running:**
 ```javascript
 // In console on UH page
-window.profPeekDebug  // Should return an object
+window.courseMateDebug  // Should return an object
 ```
 
 **2. Enable debug mode:**
@@ -151,13 +151,13 @@ window.profPeekDebug  // Should return an object
 **3. Test selectors:**
 ```javascript
 // Show current selectors
-window.profPeekDebug.showSelectors()
+window.courseMateDebug.showSelectors()
 
 // Try adding a selector manually
-window.profPeekDebug.addSelector('td.your-selector')
+window.courseMateDebug.addSelector('td.your-selector')
 
 // Force re-scan
-window.profPeekDebug.reset()
+window.courseMateDebug.reset()
 ```
 
 **4. Check the page URL:**
@@ -190,7 +190,7 @@ const SELECTORS = {
 
 ---
 
-## 📊 Mock Data Available
+##  Mock Data Available
 
 The extension includes sample data for these professors (for testing):
 
@@ -209,7 +209,7 @@ All should work and normalize to the same professor.
 
 ---
 
-## 🔄 Replacing Mock Data
+##  Replacing Mock Data
 
 To use real RateMyProfessors data:
 
@@ -229,7 +229,7 @@ To use real RateMyProfessors data:
 
 ---
 
-## ✅ Quick Test Checklist
+##  Quick Test Checklist
 
 After installation:
 
@@ -237,32 +237,32 @@ After installation:
 - [ ] No errors in extension card
 - [ ] Can open settings page
 - [ ] Test page (`test.html`) shows badges for mock professors
-- [ ] Console debug helpers work: `window.profPeekDebug`
+- [ ] Console debug helpers work: `window.courseMateDebug`
 - [ ] Real UH page detects instructors (after configuring selectors)
 - [ ] Clicking badges opens new tab (to RMP)
 - [ ] Settings persist after reload
 
 ---
 
-## 🆘 Getting Help
+## Getting Help
 
 ### Console Commands
 
 ```javascript
 // All debug helpers
-window.profPeekDebug
+window.courseMateDebug
 
 // Test name extraction
-window.profPeekDebug.testName('Smith, John')
+window.courseMateDebug.testName('Smith, John')
 
 // Show configuration
-window.profPeekDebug.showSelectors()
+window.courseMateDebug.showSelectors()
 
 // Force re-scan
-window.profPeekDebug.scan()
+window.courseMateDebug.scan()
 
 // Reset and re-scan
-window.profPeekDebug.reset()
+window.courseMateDebug.reset()
 ```
 
 ### Common Issues
@@ -277,7 +277,7 @@ window.profPeekDebug.reset()
 
 ---
 
-## 🎓 Next Steps
+##  Next Steps
 
 1. **Test locally** with `test.html`
 2. **Find UH selectors** using Inspector
@@ -288,7 +288,7 @@ window.profPeekDebug.reset()
 
 ---
 
-## 📝 Notes
+##  Notes
 
 - Extension works entirely client-side (no backend required)
 - All data cached locally in browser
@@ -296,4 +296,4 @@ window.profPeekDebug.reset()
 - MutationObserver handles dynamic content
 - Works with any number of instructors per page
 
-Happy coding! 🚀
+Happy coding! 

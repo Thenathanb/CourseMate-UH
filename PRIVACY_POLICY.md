@@ -1,14 +1,14 @@
-# Privacy Policy for CourseMate UH
+# Privacy Policy for CourseMate
 
-**Last Updated:** January 11, 2026
+**Last Updated:** January 14, 2026
 
 ## Overview
 
-CourseMate UH is committed to protecting your privacy. This extension is designed to enhance your course selection experience without collecting any personal information.
+CourseMate is committed to protecting your privacy. This extension is designed to enhance your course selection experience on supported university course pages without collecting any personal information.
 
 ## Data Collection
 
-**CourseMate UH does NOT collect, store, or transmit any personal information.**
+**CourseMate does NOT collect, store, or transmit any personal information.**
 
 Specifically, we do NOT collect:
 - Your name, email, or contact information
@@ -29,34 +29,41 @@ The extension stores the following data **locally on your device only**:
    - "Would take again" percentages
    - RateMyProfessors profile URLs
 
-2. **Extension Settings**: User preferences such as whether debug mode is enabled.
+2. **Grade Distribution Cache**: CougarGrades grade distribution data is cached in your browser's local storage to reduce repeat requests. This cache includes:
+   - Course codes
+   - Grade distribution counts and percentages
+   - Average GPA (when available)
+
+3. **Extension Settings**: User preferences such as whether debug mode is enabled.
 
 All data is stored locally using Chrome's `chrome.storage.local` API and **never leaves your device**.
 
 ## Third-Party Services
 
-CourseMate UH fetches public professor rating data from RateMyProfessors.com's public GraphQL API. When you view a course page:
+CourseMate fetches public professor data from RateMyProfessors.com's public GraphQL API and grade distribution data from CougarGrades public datasets. When you view a supported course page:
 
 1. The extension identifies professor names on the page
-2. It queries RateMyProfessors' public API for ratings
-3. The results are displayed on your page and cached locally
+2. It queries RateMyProfessors' public API for ratings and reviews
+3. It queries CougarGrades public datasets for grade distributions
+4. The results are displayed on your page and cached locally
 
-**No personal information is sent to RateMyProfessors.** Only professor names and the University of Houston school ID are used in API queries.
+**No personal information is sent to external services.** Only professor names, course codes, and the relevant school ID for the supported institution are used in API queries.
 
 ## Permissions
 
-CourseMate UH requests the following permissions:
+CourseMate requests the following permissions:
 
 - **`storage`**: To cache professor ratings locally in your browser for faster performance
-- **`activeTab`**: To access and modify course catalog pages on *.uh.edu domains
-- **`host_permissions` for *.uh.edu**: To run the extension only on University of Houston websites
+- **`activeTab`**: To access and modify course catalog pages on supported university domains (currently *.uh.edu)
+- **`host_permissions` for *.uh.edu**: To run the extension only on supported university websites (currently University of Houston)
 - **`host_permissions` for www.ratemyprofessors.com**: To fetch professor ratings from the RateMyProfessors API
+- **`host_permissions` for cougargrades.io and unpkg.com**: To fetch grade distribution data from CougarGrades public datasets
 
 ## Data Sharing
 
-**CourseMate UH does NOT share, sell, or transmit any data to third parties.**
+**CourseMate does NOT share, sell, or transmit any data to third parties.**
 
-The extension operates entirely within your browser. The only external communication is with RateMyProfessors.com's public API to fetch ratings.
+The extension operates entirely within your browser. The only external communication is with RateMyProfessors' public API and CougarGrades public datasets to fetch ratings, reviews, and grade distributions.
 
 ## Changes to This Policy
 
@@ -77,4 +84,4 @@ All locally stored data will be deleted when you uninstall the extension.
 
 ---
 
-**CourseMate UH is not affiliated with or endorsed by the University of Houston or RateMyProfessors.com.**
+**CourseMate is not affiliated with or endorsed by the University of Houston, RateMyProfessors.com, or CougarGrades.io.**

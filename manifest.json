@@ -1,15 +1,17 @@
 {
   "manifest_version": 3,
-  "name": "CourseMate UH - RateMyProfessors for UH",
+  "name": "CourseMate",
+  "short_name": "CourseMate",
   "version": "1.0.0",
-  "description": "Displays RateMyProfessors ratings directly on University of Houston course catalog pages",
+  "description": "Displays RateMyProfessors ratings and CougarGrades data on University of Houston course pages",
   "permissions": [
-    "storage",
-    "activeTab"
+    "storage"
   ],
   "host_permissions": [
     "https://*.uh.edu/*",
-    "https://www.ratemyprofessors.com/*"
+    "https://www.ratemyprofessors.com/*",
+    "https://cougargrades.io/*",
+    "https://unpkg.com/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -19,7 +21,8 @@
       "matches": [
         "https://*.uh.edu/*"
       ],
-      "js": ["scripts/simpleContent.js"],
+      "js": ["contentScript.js"],
+      "css": ["ui.css"],
       "run_at": "document_idle"
     }
   ],

@@ -114,8 +114,23 @@ function findCourseInfo(element) {
   };
 }
 
+function findSectionContainer(element) {
+  let node = element;
+  while (node && node !== document.body) {
+    if (node.matches && node.matches('tr, [role="row"]')) {
+      const text = node.textContent.toUpperCase();
+      if (/\bLECTURE\b|\bLEC\b|\bLABORATORY\b|\bLAB\b/.test(text)) {
+        return node;
+      }
+    }
+    node = node.parentElement;
+  }
+
+  return element.closest('tr') || element.closest('[role="row"]') || element.parentElement;
+}
+
 function isLabSection(element) {
-  const container = element.closest('tr') || element.closest('[role="row"]') || element.parentElement;
+  const container = findSectionContainer(element);
   if (!container) {
     return false;
   }
@@ -124,6 +139,77 @@ function isLabSection(element) {
   const hasLab = /\bLAB\b|\bLABORATORY\b/.test(text);
   const hasLecture = /\bLEC\b|\bLECTURE\b/.test(text);
   return hasLab && !hasLecture;
+}
+
+function isDuplicateOptionRow(element, professorName) {
+  const row = element.closest('tr');
+  if (!row || !professorName) {
+    return false;
+  }
+
+  const cells = Array.from(row.children).filter(node => node.nodeType === Node.ELEMENT_NODE);
+  if (cells.length === 0) {
+    return false;
+  }
+
+  const firstCellText = cells[0].textContent.trim();
+  if (firstCellText !== '') {
+    return false;
+  }
+
+  const previousRow = row.previousElementSibling;
+  if (!previousRow || !previousRow.matches('tr')) {
+    return false;
+  }
+
+  const previousText = previousRow.textContent || '';
+  if (!previousText.includes(professorName)) {
+    return false;
+  }
+
+  const upper = previousText.toUpperCase();
+  const hasLecture = /\bLEC\b|\bLECTURE\b/.test(upper);
+  return hasLecture || !/\bLAB\b|\bLABORATORY\b/.test(upper);
+}
+
+function shouldShowForLectureOnly(element) {
+  const row = element.closest('tr');
+  if (!row) {
+    return true;
+  }
+
+  let classGroups = Array.from(
+    row.querySelectorAll('td.CMPNT_CLASS_NBR .ps_box-link')
+  );
+  if (classGroups.length === 0) {
+    classGroups = Array.from(
+      row.querySelectorAll('td.CMPNT_CLASS_NBR a[id*="SSR_CLSRCH_F_WK_SSR_CMPNT_DESCR"]')
+    );
+  }
+  if (classGroups.length === 0) {
+    return true;
+  }
+
+  const cell = element.closest('td');
+  if (!cell) {
+    return true;
+  }
+
+  const instructorGroup = element.closest('.ps_box-longedit, .ps_box-edit, .ps_box-link') || element;
+  const instructorGroups = Array.from(
+    cell.querySelectorAll('.ps_box-longedit, .ps_box-edit, .ps_box-link')
+  );
+  const elementIndex = instructorGroups.indexOf(instructorGroup);
+  const classIndex = elementIndex >= 0 && elementIndex < classGroups.length ? elementIndex : 0;
+  const classText = (classGroups[classIndex]?.textContent || '').toUpperCase();
+
+  if (!classText) {
+    return true;
+  }
+
+  const isLecture = /\bLEC\b|\bLECTURE\b/.test(classText);
+  const isLab = /\bLAB\b|\bLABORATORY\b/.test(classText);
+  return isLecture || !isLab;
 }
 
 function escapeHtml(value) {
@@ -446,12 +532,12 @@ async function processProfessorElement(element) {
     return;
   }
 
-  if (isLabSection(element)) {
+  const professorName = extractProfessorName(element);
+  if (!professorName) {
     return;
   }
 
-  const professorName = extractProfessorName(element);
-  if (!professorName) {
+  if (isLabSection(element) || isDuplicateOptionRow(element, professorName) || !shouldShowForLectureOnly(element)) {
     return;
   }
 

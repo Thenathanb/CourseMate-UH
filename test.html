@@ -67,7 +67,7 @@
   </div>
 
   <div class="info-box">
-    <strong>Test Page for CourseMate UH Extension</strong><br>
+    <strong>Test Page for CourseMate Extension</strong><br>
     This page simulates a UH course catalog with instructor names in various formats.
     The extension should automatically add rating badges next to each professor's name.
   </div>
@@ -161,13 +161,13 @@
   <div style="margin-top: 30px; padding: 20px; background: white; border-radius: 8px;">
     <h3>Testing Instructions</h3>
     <ol>
-      <li><strong>Load the extension</strong> - Follow the README to install CourseMate UH</li>
+      <li><strong>Load the extension</strong> - Follow the README to install CourseMate</li>
       <li><strong>Open this test page</strong> - Note: You'll need to temporarily modify the manifest to allow this page, or host it on a *.uh.edu domain</li>
       <li><strong>Expected results:</strong>
         <ul>
-          <li>✅ Badges appear next to: Smith, Sarah Johnson, Williams, Emily Davis</li>
-          <li>❌ No badges for: TBA, Staff</li>
-          <li>✅ Handles different formats: "Last, First", "First Last", "LAST, FIRST"</li>
+          <li>Badges appear next to: Smith, Sarah Johnson, Williams, Emily Davis</li>
+          <li>No badges for: TBA, Staff</li>
+          <li>Handles different formats: "Last, First", "First Last", "LAST, FIRST"</li>
         </ul>
       </li>
       <li><strong>Test interactions:</strong>
@@ -183,19 +183,19 @@
     <p>Open browser console (F12) and run:</p>
     <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto;">
 // Check if extension loaded
-window.profPeekDebug
+window.courseMateDebug
 
 // Force a scan
-window.profPeekDebug.scan()
+window.courseMateDebug.scan()
 
 // Test name normalization
-window.profPeekDebug.testName('Smith, John')
+window.courseMateDebug.testName('Smith, John')
 
 // Show current selectors
-window.profPeekDebug.showSelectors()
+window.courseMateDebug.showSelectors()
 
 // Add the selector used on this page
-window.profPeekDebug.addSelector('.instructor-name')
+window.courseMateDebug.addSelector('.instructor-name')
     </pre>
   </div>
 

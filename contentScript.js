@@ -14,7 +14,6 @@ const SELECTORS = {
   instructorElements: [
     // UH-specific selectors (PeopleSoft system)
     'span.ps_box-value[id*="SSR_INSTR_LONG"]',  // Most specific - targets instructor fields
-    '.ps_box-value',                             // Broader fallback for other PeopleSoft pages
 
     // Generic selectors (fallback for other pages)
     '.instructor-name',          // Class-based selector
@@ -45,6 +44,13 @@ const processedElements = new WeakSet();
 
 // Track active badges
 const activeBadges = new Map();
+
+let courseMateTooltip = null;
+const hoverState = {
+  activeBadge: null,
+  hideTimeout: null,
+  requestId: 0
+};
 
 /**
  * Extract professor name from element
@@ -84,6 +90,223 @@ function extractProfessorName(element) {
 }
 
 /**
+ * Try to find a course code near the instructor element
+ */
+function findCourseInfo(element) {
+  const coursePattern = /\b([A-Z]{2,4})\s*([0-9]{4})\b/;
+  const container = element.closest('tr') || element.closest('[role="row"]') || element.parentElement;
+
+  if (!container) {
+    return null;
+  }
+
+  const match = container.textContent.match(coursePattern);
+  if (!match) {
+    return null;
+  }
+
+  const subject = match[1].toUpperCase();
+  const catalog = match[2];
+  return {
+    subject,
+    catalog,
+    display: `${subject} ${catalog}`
+  };
+}
+
+function isLabSection(element) {
+  const container = element.closest('tr') || element.closest('[role="row"]') || element.parentElement;
+  if (!container) {
+    return false;
+  }
+
+  const text = container.textContent.toUpperCase();
+  const hasLab = /\bLAB\b|\bLABORATORY\b/.test(text);
+  const hasLecture = /\bLEC\b|\bLECTURE\b/.test(text);
+  return hasLab && !hasLecture;
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function truncateText(text, maxLength) {
+  if (!text || text.length <= maxLength) {
+    return text;
+  }
+  return `${text.slice(0, maxLength - 3).trim()}...`;
+}
+
+function ensureTooltip() {
+  if (courseMateTooltip) {
+    return courseMateTooltip;
+  }
+
+  courseMateTooltip = document.createElement('div');
+  courseMateTooltip.className = 'coursemate-tooltip';
+  courseMateTooltip.addEventListener('mouseenter', () => {
+    if (hoverState.hideTimeout) {
+      clearTimeout(hoverState.hideTimeout);
+    }
+  });
+  courseMateTooltip.addEventListener('mouseleave', () => {
+    scheduleHideTooltip();
+  });
+
+  document.body.appendChild(courseMateTooltip);
+  return courseMateTooltip;
+}
+
+function positionTooltip(target) {
+  const tooltip = ensureTooltip();
+  const rect = target.getBoundingClientRect();
+  const tooltipRect = tooltip.getBoundingClientRect();
+  const padding = 10;
+
+  let top = rect.bottom + padding;
+  let left = rect.left;
+
+  if (top + tooltipRect.height > window.innerHeight) {
+    top = rect.top - tooltipRect.height - padding;
+  }
+  if (left + tooltipRect.width > window.innerWidth - padding) {
+    left = window.innerWidth - tooltipRect.width - padding;
+  }
+  if (left < padding) {
+    left = padding;
+  }
+
+  tooltip.style.top = `${top}px`;
+  tooltip.style.left = `${left}px`;
+}
+
+function renderTooltipContent({ professorName, baseData, hoverData, courseInfo, loading, error }) {
+  const tooltip = ensureTooltip();
+  const displayName = professorName || baseData?.name || 'Professor';
+  const rating = baseData?.overallRating ? baseData.overallRating.toFixed(1) : 'N/A';
+  const difficulty = baseData?.difficulty !== undefined ? baseData.difficulty.toFixed(1) : 'N/A';
+  const wouldTakeAgain = baseData?.wouldTakeAgainPercent !== undefined ? `${baseData.wouldTakeAgainPercent}%` : 'N/A';
+  const rmpUrl = baseData?.rmpUrl;
+  const cougarGradesUrl = hoverData?.cougarGradesUrl;
+  const gradeData = hoverData?.gradeDistribution;
+  const reviews = hoverData?.reviews || [];
+  const isLoading = loading && !hoverData;
+
+  const gradeRows = isLoading
+    ? '<div class="coursemate-tooltip-loading">Loading grade data...</div>'
+    : gradeData?.percentages ? ['A', 'B', 'C', 'D', 'F'].map(letter => {
+      const value = gradeData.percentages[letter] ?? 0;
+      return `
+        <div class="coursemate-grade-row">
+          <div class="coursemate-grade-label">${letter}</div>
+          <div class="coursemate-grade-bar">
+            <div class="coursemate-grade-bar-fill" style="width: ${value}%"></div>
+          </div>
+          <div class="coursemate-grade-value">${value}%</div>
+        </div>
+      `;
+    }).join('') : `<div class="coursemate-tooltip-loading">${courseInfo ? 'Grade data unavailable.' : 'Course not detected on page.'}</div>`;
+
+  const reviewsHtml = isLoading
+    ? '<div class="coursemate-tooltip-loading">Loading reviews...</div>'
+    : reviews.length > 0 ? reviews.map(review => `
+      <div class="coursemate-review">"${escapeHtml(truncateText(review.comment || '', 160))}"</div>
+    `).join('') : '<div class="coursemate-tooltip-loading">No recent reviews found.</div>';
+
+  const courseLabel = gradeData?.course || courseInfo?.display;
+
+  tooltip.innerHTML = `
+    <div class="coursemate-tooltip-header">
+      <div class="coursemate-tooltip-name">${escapeHtml(displayName)}</div>
+      <div class="coursemate-tooltip-rating">${rating} *</div>
+    </div>
+    <div class="coursemate-tooltip-subheader">Difficulty: ${difficulty} | ${wouldTakeAgain} Would Take Again</div>
+    <div class="coursemate-tooltip-section">
+      <div class="coursemate-tooltip-section-title">Grade Distribution${courseLabel ? ` (${escapeHtml(courseLabel)})` : ''}</div>
+      ${gradeRows}
+      ${gradeData?.gpa !== undefined ? `<div class="coursemate-grade-gpa">Avg GPA: ${gradeData.gpa.toFixed(2)}</div>` : ''}
+      ${gradeData?.partial ? '<div class="coursemate-grade-gpa">Partial data (timed out)</div>' : ''}
+    </div>
+    <div class="coursemate-tooltip-section">
+      <div class="coursemate-tooltip-section-title">Recent Reviews</div>
+      ${reviewsHtml}
+    </div>
+    <div class="coursemate-tooltip-footer">
+      ${rmpUrl ? `<a class="coursemate-tooltip-link" href="${rmpUrl}" target="_blank" rel="noreferrer">View on RMP -></a>` : '<span></span>'}
+      ${cougarGradesUrl ? `<a class="coursemate-tooltip-link" href="${cougarGradesUrl}" target="_blank" rel="noreferrer">CougarGrades -></a>` : '<span></span>'}
+    </div>
+  `;
+
+  if (error) {
+    tooltip.innerHTML += `<div class="coursemate-tooltip-loading">${escapeHtml(error)}</div>`;
+  }
+}
+
+function scheduleHideTooltip() {
+  if (hoverState.hideTimeout) {
+    clearTimeout(hoverState.hideTimeout);
+  }
+
+  hoverState.hideTimeout = setTimeout(() => {
+    const tooltip = ensureTooltip();
+    tooltip.classList.remove('show');
+    hoverState.activeBadge = null;
+  }, 150);
+}
+
+async function showTooltipForBadge(badge, baseData, context) {
+  const tooltip = ensureTooltip();
+  hoverState.activeBadge = badge;
+  hoverState.requestId += 1;
+  const requestId = hoverState.requestId;
+
+  renderTooltipContent({
+    professorName: context.professorName,
+    baseData,
+    hoverData: context.hoverData,
+    courseInfo: context.courseInfo,
+    loading: !context.hoverData
+  });
+
+  tooltip.classList.add('show');
+  positionTooltip(badge);
+
+  if (context.hoverData || context.loadingPromise) {
+    return;
+  }
+
+  context.loadingPromise = chrome.runtime.sendMessage({
+    action: 'getHoverData',
+    professorName: context.professorName,
+    teacherId: baseData?.rmpId,
+    courseInfo: context.courseInfo
+  }).then((response) => {
+    context.hoverData = response || null;
+  }).catch((error) => {
+    context.hoverData = { error: error.message };
+  }).finally(() => {
+    context.loadingPromise = null;
+    if (hoverState.activeBadge !== badge || requestId !== hoverState.requestId) {
+      return;
+    }
+    renderTooltipContent({
+      professorName: context.professorName,
+      baseData,
+      hoverData: context.hoverData,
+      courseInfo: context.courseInfo,
+      loading: false,
+      error: context.hoverData?.error
+    });
+    positionTooltip(badge);
+  });
+}
+
+/**
  * Check if element should be excluded
  */
 function shouldExclude(element) {
@@ -107,7 +330,7 @@ function shouldExclude(element) {
  */
 function createLoadingBadge() {
   const badge = document.createElement('span');
-  badge.className = 'prof-peek-badge prof-peek-loading';
+  badge.className = 'coursemate-badge coursemate-loading';
   badge.textContent = '...';
   badge.title = 'Loading professor rating...';
   return badge;
@@ -116,9 +339,9 @@ function createLoadingBadge() {
 /**
  * Create rating badge
  */
-function createRatingBadge(data) {
+function createRatingBadge(data, context) {
   const badge = document.createElement('span');
-  badge.className = 'prof-peek-badge prof-peek-found';
+  badge.className = 'coursemate-badge coursemate-found';
 
   const rating = data.overallRating.toFixed(1);
   const ratingClass = rating >= 4.0 ? 'rating-high' : rating >= 3.0 ? 'rating-medium' : 'rating-low';
@@ -128,7 +351,7 @@ function createRatingBadge(data) {
     <span class="rating-count">(${data.numRatings})</span>
   `;
 
-  // Build detailed tooltip
+  // Build accessible label
   const tooltipParts = [
     `Overall: ${rating}/5.0`,
     `${data.numRatings} ratings`
@@ -142,8 +365,7 @@ function createRatingBadge(data) {
     tooltipParts.push(`Difficulty: ${data.difficulty.toFixed(1)}/5.0`);
   }
 
-  tooltipParts.push('\nClick to view on RateMyProfessors');
-  badge.title = tooltipParts.join('\n');
+  badge.setAttribute('aria-label', tooltipParts.join('. '));
 
   // Click handler to open RMP page
   badge.style.cursor = 'pointer';
@@ -155,6 +377,24 @@ function createRatingBadge(data) {
     }
   });
 
+  const badgeContext = {
+    professorName: context?.professorName,
+    courseInfo: context?.courseInfo,
+    hoverData: null,
+    loadingPromise: null
+  };
+
+  activeBadges.set(badge, { baseData: data, context: badgeContext });
+  badge.addEventListener('mouseenter', () => {
+    const state = activeBadges.get(badge);
+    if (state) {
+      showTooltipForBadge(badge, state.baseData, state.context);
+    }
+  });
+  badge.addEventListener('mouseleave', () => {
+    scheduleHideTooltip();
+  });
+
   return badge;
 }
 
@@ -163,7 +403,7 @@ function createRatingBadge(data) {
  */
 function createNotFoundBadge() {
   const badge = document.createElement('span');
-  badge.className = 'prof-peek-badge prof-peek-not-found';
+  badge.className = 'coursemate-badge coursemate-not-found';
   badge.textContent = '?';
   badge.title = 'No ratings found on RateMyProfessors';
   return badge;
@@ -174,7 +414,7 @@ function createNotFoundBadge() {
  */
 function createErrorBadge(message) {
   const badge = document.createElement('span');
-  badge.className = 'prof-peek-badge prof-peek-error';
+  badge.className = 'coursemate-badge coursemate-error';
   badge.textContent = '!';
   badge.title = `Error: ${message}`;
   return badge;
@@ -185,8 +425,9 @@ function createErrorBadge(message) {
  */
 function insertBadge(element, badge) {
   // Check if badge already exists
-  const existingBadge = element.querySelector('.prof-peek-badge');
+  const existingBadge = element.querySelector('.coursemate-badge');
   if (existingBadge) {
+    activeBadges.delete(existingBadge);
     existingBadge.replaceWith(badge);
   } else {
     // Insert badge after the text content
@@ -205,6 +446,10 @@ async function processProfessorElement(element) {
     return;
   }
 
+  if (isLabSection(element)) {
+    return;
+  }
+
   const professorName = extractProfessorName(element);
   if (!professorName) {
     return;
@@ -213,7 +458,11 @@ async function processProfessorElement(element) {
   // Mark as processed
   processedElements.add(element);
 
-  console.log(`[CourseMate UH] Found professor: ${professorName}`);
+  const courseInfo = findCourseInfo(element);
+  console.log(`[CourseMate] Found professor: ${professorName}`);
+  if (courseInfo) {
+    console.log(`[CourseMate] Matched course: ${courseInfo.display}`);
+  }
 
   // Insert loading badge
   const loadingBadge = createLoadingBadge();
@@ -232,7 +481,10 @@ async function processProfessorElement(element) {
     if (response.error) {
       finalBadge = createErrorBadge(response.error);
     } else if (response.found && response.data) {
-      finalBadge = createRatingBadge(response.data);
+      finalBadge = createRatingBadge(response.data, {
+        professorName,
+        courseInfo
+      });
     } else {
       finalBadge = createNotFoundBadge();
     }
@@ -241,7 +493,7 @@ async function processProfessorElement(element) {
     insertBadge(element, finalBadge);
 
   } catch (error) {
-    console.error('[CourseMate UH] Error processing professor:', error);
+    console.error('[CourseMate] Error processing professor:', error);
     const errorBadge = createErrorBadge(error.message);
     insertBadge(element, errorBadge);
   }
@@ -251,18 +503,18 @@ async function processProfessorElement(element) {
  * Scan page for professor names
  */
 function scanPage() {
-  console.log('[CourseMate UH] Scanning page for professors...');
+  console.log('[CourseMate] Scanning page for professors...');
 
   for (const selector of SELECTORS.instructorElements) {
     try {
       const elements = document.querySelectorAll(selector);
-      console.log(`[CourseMate UH] Found ${elements.length} elements matching "${selector}"`);
+      console.log(`[CourseMate] Found ${elements.length} elements matching "${selector}"`);
 
       elements.forEach(element => {
         processProfessorElement(element);
       });
     } catch (error) {
-      console.error(`[CourseMate UH] Error with selector "${selector}":`, error);
+      console.error(`[CourseMate] Error with selector "${selector}":`, error);
     }
   }
 }
@@ -287,10 +539,10 @@ function initMutationObserver() {
     }
 
     if (shouldScan) {
-      console.log('[CourseMate UH] DOM changed, re-scanning...');
+      console.log('[CourseMate] DOM changed, re-scanning...');
       // Debounce scanning
-      clearTimeout(window.profPeekScanTimeout);
-      window.profPeekScanTimeout = setTimeout(scanPage, 500);
+      clearTimeout(window.courseMateScanTimeout);
+      window.courseMateScanTimeout = setTimeout(scanPage, 500);
     }
   });
 
@@ -300,14 +552,14 @@ function initMutationObserver() {
     subtree: true
   });
 
-  console.log('[CourseMate UH] MutationObserver initialized');
+  console.log('[CourseMate] MutationObserver initialized');
 }
 
 /**
  * Initialize content script
  */
 function init() {
-  console.log('[CourseMate UH] Content script loaded');
+  console.log('[CourseMate] Content script loaded');
 
   // Wait for DOM to be fully loaded
   if (document.readyState === 'loading') {
@@ -324,8 +576,18 @@ function init() {
   // Re-scan when page visibility changes (in case content loaded while tab was hidden)
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
-      console.log('[CourseMate UH] Page became visible, re-scanning...');
+      console.log('[CourseMate] Page became visible, re-scanning...');
       scanPage();
+    }
+  });
+
+  window.addEventListener('scroll', () => {
+    scheduleHideTooltip();
+  }, { passive: true });
+
+  window.addEventListener('resize', () => {
+    if (hoverState.activeBadge) {
+      positionTooltip(hoverState.activeBadge);
     }
   });
 }
@@ -337,7 +599,7 @@ init();
  * TESTING HELPER FUNCTIONS
  * These can be called from the browser console for debugging
  */
-window.profPeekDebug = {
+window.courseMateDebug = {
   // Force re-scan
   scan: scanPage,
 
@@ -365,9 +627,9 @@ window.profPeekDebug = {
     processedElements.clear();
     activeBadges.clear();
     // Remove existing badges
-    document.querySelectorAll('.prof-peek-badge').forEach(b => b.remove());
+    document.querySelectorAll('.coursemate-badge').forEach(b => b.remove());
     scanPage();
   }
 };
 
-console.log('[CourseMate UH] Debug helpers available: window.profPeekDebug');
+console.log('[CourseMate] Debug helpers available: window.courseMateDebug');
